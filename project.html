@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать карточку абонента</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="scripts.js" defer></script>
+</head>
+<body>
+<h1>Создать карточку абонента</h1>
+<form action="create.php" method="POST">
+    <label for="full_name">ФИО:</label>
+    <input type="text" id="full_name" name="full_name" required><br><br>
+    <label for="city">Выберите город:</label>
+    <select id="city" name="city" onchange="setCityCode()">
+        <option value="162">Брест</option>
+        <option value="212">Витебск</option>
+        <option value="232">Гомель</option>
+        <option value="152">Гродно</option>
+        <option value="17">Минск</option>
+        <option value="222">Могилев</option>
+    </select><br><br>
+    <label for="contract_number">Номер договора:</label>
+    <input type="text" id="contract_number" name="contract_number" pattern="\d{8}" title="Должно быть 8 цифр" required><br><br>
+    <label for="phone_number">Номер телефона:</label>
+    <input type="tel" id="phone_number" name="phone_number" pattern="\+375\s?\(\d{2}\)\s?\d{3}-\d{2}-\d{2}" title="Формат: +375 (XX) XXX-XX-XX" required><br><br>
+    <label for="address">Адрес:</label>
+    <input type="text" id="address" name="address" required><br><br>
+    <label for="tariff_plan">Тарифный план:</label>
+    <select id="tariff_plan" name="tariff_plan" onchange="setTariffPlan()">
+        <option value="Тарифный план A">Тарифный план A</option>
+        <option value="Тарифный план B">Тарифный план B</option>
+        <option value="Тарифный план C">Тарифный план C</option>
+    </select><br><br>
+    <input type="submit" value="Создать карточку"><br><br>
+    <button onclick="openModal()">Просмотреть карточку</button><br><br>
+</form>
+<div class="modal-container" id="mainModal">
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Просмотр карточки абонента</h2>
+            <label for="modal_contract_number">Введите номер договора:</label>
+            <input type="text" id="modal_contract_number">
+            <button onclick="checkContractNumber()">Подтвердить</button>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById('subscriberForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var formData = new FormData(this);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'create_subscriber.php', true);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                var messageContainer = document.getElementById('messageContainer');
+                messageContainer.textContent = xhr.responseText;
+                if (xhr.responseText.includes('успешно')) {
+                    document.getElementById('subscriberForm').reset();
+                }
+            } else {
+                alert('Произошла ошибка при создании карточки абонента.');
+            }
+        };
+        xhr.send(formData);
+    });
+</script>
+</body>
+</html>

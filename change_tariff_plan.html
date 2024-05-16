@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Изменить тарифный план</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<h1>Изменить тарифный план</h1>
+<form id="changeTariffForm" action="change_tariff_plan.php" method="POST">
+    <label for="contract_number">Номер договора:</label>
+    <input type="text" id="contract_number" name="contract_number" required><br><br>
+    <label for="new_tariff_plan">Выберите новый тарифный план:</label>
+    <select id="new_tariff_plan" name="new_tariff_plan">
+        <option value="Тарифный план A">Тарифный план A</option>
+        <option value="Тарифный план B">Тарифный план B</option>
+        <option value="Тарифный план C">Тарифный план C</option>
+    </select><br><br>
+    <input type="submit" value="Изменить тарифный план">
+</form>
+<button type="button" class="btn btn-primary" id="viewHistoryBtn" data-toggle="modal" data-target="#historyModal">Просмотреть изменение смены тарифного плана</button>
+<div class="modal" id="historyModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">История смены тарифного плана</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" id="historyBody">
+            </div>
+        </div>
+    </div>
+</div>
+<div id="messageContainer"></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    function loadHistory() {
+        var contract_number = $('#contract_number').val();
+        $.ajax({
+            url: 'history.php?contract_number=' + contract_number,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                var modalContent = '';
+                for (var i = 0; i < data.length; i++) {
+                    modalContent += '<p><strong>Старый тарифный план:</strong> ' + data[i].old_tp + '</p>';
+                    modalContent += '<p><strong>Новый тарифный план:</strong> ' + data[i].new_tp + '</p>';
+                    modalContent += '<p><strong>Дата изменения:</strong> ' + data[i].change_date + '</p>';
+                    modalContent += '<hr>';
+                }
+                $('#historyBody').html(modalContent);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                $('#historyBody').html('<p>Произошла ошибка при загрузке истории: ' + textStatus + ' - ' + errorThrown + '</p>');
+            }
+        });
+    }
+
+    $('#viewHistoryBtn').click(function() {
+        loadHistory();
+    });
+
+</script>
+</body>
+</html>

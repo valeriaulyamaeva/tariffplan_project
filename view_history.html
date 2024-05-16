@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscriber Information</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#showHistoryBtn").click(function(){
+                $.ajax({
+                    url: "history.php",
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data){
+                        var modalContent = "";
+                        for (var i = 0; i < data.length; i++) {
+                            modalContent += "<p>Старый ТП: " + data[i].old_tp + "</p>";
+                            modalContent += "<p>Новый ТП: " + data[i].new_tp + "</p>";
+                            modalContent += "<p>Дата изменения: " + data[i].change_date + "</p>";
+                            modalContent += "<hr>";
+                        }
+                        $("#historyModal .modal-body").html(modalContent);
+                        $("#historyModal").modal("show");
+                    },
+                    error: function(jqXHR, textStatus, errorThrown){
+                        alert("Ошибка при получении истории: " + textStatus + " - " + errorThrown);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+<button id="showHistoryBtn">Показать историю смены ТП</button>
+<div id="historyModal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">История смены тарифного плана</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
